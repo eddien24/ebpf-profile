@@ -1,13 +1,16 @@
 #!/usr/bin/env bash
 
 root_install() {
-    apt update 
+    apt update
 
     # Development tools
-    apt -y install vim git wget curl tmux nano man 
+    apt -y install vim git wget curl tmux nano man
 
     # eBPF dependencies
-    apt -y install build-essential cmake zlib1g-dev libevent-dev libelf-dev llvm clang libc6-dev-i386 pkg-config libbpf-dev linux-headers-`uname -r` 
+    apt -y install build-essential cmake zlib1g-dev libevent-dev libelf-dev llvm clang libc6-dev-i386 pkg-config libbpf-dev linux-headers-`uname -r`
+
+    # neovim dependencies
+    apt -y install ninja-build gettext cmake unzip curl
 
     # Clean up temporary & .deb files
     rm -rf /tmp/* /var/lib/apt/lists/*
@@ -18,18 +21,36 @@ root_install() {
 
 go_install() {
     GO_HOME=$HOME/.go
+    GO=$GO_HOME/bin/go
     mkdir -p $GO_HOME
     wget -O - https://go.dev/dl/go1.23.4.linux-amd64.tar.gz | tar -xvz -C $GO_HOME
     echo export PATH=$GO_HOME/go/bin:$PATH >> $HOME/.bashrc
+
+    # Tools
+    $GO install mvdan.cc/gofumpt@latest
+    $GO install golang.org/x/tools/gopls@latest
+    $GO install github.com/koron/iferr@latest
 }
 
-rust_install() { 
+rust_install() {
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > rustup.sh
     sh ./rustup.sh -y
     rm rustup.sh
     source .cargo/env
+    rustup component add rust-analyzer
 }
 
-sudo bash -c "$(declare -f root_install); root_install" 
-go_install 
-rust_install 
+nvim_install() {
+    git clone https://github.com/neovim/neovim
+    pushd neovim
+    git checkout stable
+    make CMAKE_BUILD_TYPE=RelWithDebInfo
+    sudo make install
+    popd
+    rm -rf neovim
+}
+
+sudo bash -c "$(declare -f root_install); root_install"
+go_install
+rust_install
+nvim_install
