@@ -1,26 +1,10 @@
 #!/usr/bin/env bash 
 
 # Development tools 
-apt update && apt -y install \ 
-    vim \ 
-    git \
-    wget \ 
-    curl \ 
-    tmux \ 
-    nano \
-    man
+sudo apt-get update && sudo apt-get -y install vim git wget curl tmux nano man
 
 # eBPF dependencies 
-apt update && apt -y install \ 
-    build-essential \ 
-    cmake \ 
-    zlib1g-dev \ 
-    libevent-dev \
-    libelf-dev \ 
-    llvm \
-    clang \ 
-    libc6-dev-i386 \
-    pkg-config 
+sudo apt-get update && sudo apt-get -y install build-essential cmake zlib1g-dev libevent-dev libelf-dev llvm clang libc6-dev-i386 pkg-config 
 
 # Clean up temporary & .deb files 
 rm -rf /tmp/* /var/lib/apt/lists/* 
