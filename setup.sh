@@ -20,7 +20,7 @@ go_install() {
     GO_HOME=$HOME/.go
     mkdir -p $GO_HOME
     wget -O - https://go.dev/dl/go1.23.4.linux-amd64.tar.gz | tar -xvz -C $GO_HOME
-    export PATH=$GO_HOME/go/bin:$PATH
+    echo export PATH=$GO_HOME/go/bin:$PATH >> $HOME/.bashrc
 }
 
 rust_install() { 
@@ -30,8 +30,6 @@ rust_install() {
     source .cargo/env
 }
 
-sudo bash -c "$(declare -f root_install); root_install" &
-go_install &
-rust_install &
-echo export PATH=$GO_HOME/go/bin:$PATH >> $HOME/.bashrc
-wait
+sudo bash -c "$(declare -f root_install); root_install" 
+go_install 
+rust_install 
