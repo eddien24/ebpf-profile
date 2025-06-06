@@ -1,35 +1,19 @@
 #!/usr/bin/env bash
 
 root_install() {
+    apt update 
+
     # Development tools
-    apt-get update && apt-get -y install vim git wget curl tmux nano man &
+    apt -y install vim git wget curl tmux nano man 
 
     # eBPF dependencies
-    apt-get update && apt-get -y install build-essential cmake zlib1g-dev libevent-dev libelf-dev llvm clang libc6-dev-i386 pkg-config libbpf-dev linux-headers-`uname -r` &
-    wait
+    apt -y install build-essential cmake zlib1g-dev libevent-dev libelf-dev llvm clang libc6-dev-i386 pkg-config libbpf-dev linux-headers-`uname -r` 
 
     # Clean up temporary & .deb files
     rm -rf /tmp/* /var/lib/apt/lists/*
 
     # Make sure headers work
     ln -s /usr/include/x86_64-linux-gnu/asm/ /usr/include/asm
-}
-
-bpf_install() {
-    mkdir /src && pushd /src
-    wget https://github.com/bpftrace/bpftrace/releases/download/v0.20.4/bpftrace
-    chmod +x bpftrace
-    git clone https://github.com/libbpf/libbpf-bootstrap.git && \
-        cd libbpf-bootstrap && \
-        git submodule update --init --recursive
-    cd libbpf-bootstrap/libbpf/src && \
-        make BUILD_STATIC_ONLY=y && \
-        make install BUILD_STATIC_ONLY=y LIBDIR=/usr/lib/x86_64-linux-gnu/
-    git clone --recurse-submodules https://github.com/libbpf/bpftool.git && \
-        cd bpftool/src && \
-        make -j$(nproc) && \
-        make install
-    popd
 }
 
 go_install() {
@@ -39,7 +23,15 @@ go_install() {
     export PATH=$GO_HOME/go/bin:$PATH
 }
 
+rust_install() { 
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > rustup.sh
+    sh ./rustup.sh -y
+    rm rustup.sh
+    source .cargo/env
+}
+
 sudo bash -c "$(declare -f root_install); root_install" &
 go_install &
+rust_install &
 echo export PATH=$GO_HOME/go/bin:$PATH >> $HOME/.bashrc
 wait
