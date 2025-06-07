@@ -4,7 +4,7 @@ root_install() {
     apt update
 
     # Development tools
-    apt -y install vim git wget curl tmux nano man
+    apt -y install vim git wget curl tmux nano man gdb
 
     # eBPF dependencies
     apt -y install build-essential cmake zlib1g-dev libevent-dev libelf-dev llvm clang libc6-dev-i386 pkg-config libbpf-dev linux-headers-`uname -r`
