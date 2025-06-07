@@ -40,6 +40,7 @@ rust_install() {
     rm rustup.sh
     source $CARGO_HOME/env
     rustup component add rust-analyzer
+    cargo install ripgrep
 }
 
 nvim_install() {
