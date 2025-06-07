@@ -33,10 +33,12 @@ go_install() {
 }
 
 rust_install() {
+    CARGO_HOME=$HOME/.cargo
+    RUSTUP_HOME=$HOME/.rustup
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > rustup.sh
     sh ./rustup.sh -y
     rm rustup.sh
-    source .cargo/env
+    source $CARGO_HOME/env
     rustup component add rust-analyzer
 }
 
