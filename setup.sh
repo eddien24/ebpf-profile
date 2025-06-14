@@ -21,10 +21,10 @@ root_install() {
 
 go_install() {
     GO_HOME=$HOME/.go
-    GO=$GO_HOME/bin/go
+    GO=$GO_HOME/go/bin/go
     mkdir -p $GO_HOME
     wget -O - https://go.dev/dl/go1.23.4.linux-amd64.tar.gz | tar -xvz -C $GO_HOME
-    echo export PATH=$GO_HOME/go/bin:$PATH >> $HOME/.bashrc
+    echo export PATH=$HOME/go/bin:$GO_HOME/go/bin:$PATH >> $HOME/.bashrc
 
     # Tools
     $GO install mvdan.cc/gofumpt@latest
