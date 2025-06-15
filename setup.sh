@@ -4,7 +4,10 @@ root_install() {
     apt update
 
     # Development tools
-    apt -y install vim git wget curl tmux nano man gdb
+    apt -y install vim git wget curl tmux nano man gdb clangd-19
+
+    # Give clangd correct binary name 
+    update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-12 100
 
     # eBPF dependencies
     apt -y install build-essential cmake zlib1g-dev libevent-dev libelf-dev llvm clang libc6-dev-i386 pkg-config libbpf-dev linux-headers-`uname -r`
