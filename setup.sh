@@ -4,7 +4,7 @@ root_install() {
     apt update
 
     # Development tools
-    apt -y install vim git wget curl tmux nano man gdb clangd clang-format
+    apt -y install vim git wget curl tmux nano man gdb clangd clang-format fzf
 
     # eBPF dependencies
     apt -y install build-essential cmake zlib1g-dev libevent-dev libelf-dev llvm clang libc6-dev-i386 pkg-config libbpf-dev linux-headers-`uname -r`
@@ -19,19 +19,6 @@ root_install() {
     ln -s /usr/include/x86_64-linux-gnu/asm/ /usr/include/asm
 }
 
-go_install() {
-    GO_HOME=$HOME/.go
-    GO=$GO_HOME/go/bin/go
-    mkdir -p $GO_HOME
-    wget -O - https://go.dev/dl/go1.23.4.linux-amd64.tar.gz | tar -xvz -C $GO_HOME
-    echo export PATH=$HOME/go/bin:$GO_HOME/go/bin:$PATH >> $HOME/.bashrc
-
-    # Tools
-    $GO install mvdan.cc/gofumpt@latest
-    $GO install golang.org/x/tools/gopls@latest
-    $GO install github.com/koron/iferr@latest
-}
-
 rust_install() {
     CARGO_HOME=$HOME/.cargo
     RUSTUP_HOME=$HOME/.rustup
@@ -41,6 +28,7 @@ rust_install() {
     source $CARGO_HOME/env
     rustup component add rust-analyzer
     cargo install ripgrep
+    cargo install tree-sitter-cli
 }
 
 nvim_install() {
@@ -51,9 +39,10 @@ nvim_install() {
     sudo make install
     popd
     rm -rf neovim
+    nvim -c 'TSInstall all'
+    nvim -c 'Lazy'
 }
 
 sudo bash -c "$(declare -f root_install); root_install"
-go_install
 rust_install
 nvim_install
